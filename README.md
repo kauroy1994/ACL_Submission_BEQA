@@ -10,7 +10,7 @@ By following the examples in this repository, you can:
 2. **Run a retriever** (TF-IDF, BM25, neural, etc.).
 3. **Apply the BEQA transform** on the retrieved passages, optionally measuring how much it improves precision.
 
-Below, you will find instructions for installing dependencies, running the code, and extending it for your own datasets and retrieval methods. We also include sample code snippets for employing BEQA with other API services such as OpenAI, Ollama, Cohere, Mistral, or Anthropic’s Claude.
+Below, you will find instructions for installing dependencies, running the code, and extending it for your own datasets and retrieval methods. We also include sample code snippets for employing BEQA with LLM API services such as GROQ, OpenAI, Ollama, Cohere, Mistral, or Anthropic’s Claude.
 
 Continue reading to learn how to **install**, **execute**, and **extend** the BEQA solution for your own use cases!
 
