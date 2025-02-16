@@ -1,7 +1,7 @@
 # Introduction
 
 Welcome to the **Bulls-eye QA (BEQA) Transform** repository! This project demonstrates how to enhance retrieval accuracy by transforming raw text passages into concise question-answer pairs via Groq’s API (or other LLM services). Specifically, we employ:
-- A **multi-step retrieval pipeline** using TF-IDF (or any custom retriever),
+- A **multi-step retrieval pipeline** using any custom retriever,
 - An **optional question-answer (QA) transformation** step (the “Bulls-eye” approach) to isolate the most relevant context,
 - Methods to measure precision gains (e.g., a **Ratio of Improvement** metric).
 
