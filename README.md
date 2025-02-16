@@ -1,4 +1,19 @@
-# BEQA Documentation
+# Introduction
+
+Welcome to the **Bulls-eye QA (BEQA) Transform** repository! This project demonstrates how to enhance retrieval accuracy by transforming raw text passages into concise question-answer pairs via Groq’s API (or other LLM services). Specifically, we employ:
+- A **multi-step retrieval pipeline** using TF-IDF (or any custom retriever),
+- An **optional question-answer (QA) transformation** step (the “Bulls-eye” approach) to isolate the most relevant context,
+- Methods to measure precision gains (e.g., a **Ratio of Improvement** metric).
+
+By following the examples in this repository, you can:
+1. **Load or stream your own dataset** (e.g., SQuAD, Trivia QA, WikiQA, etc.).
+2. **Run a retriever** (TF-IDF, BM25, neural, etc.).
+3. **Apply the BEQA transform** on the retrieved passages, optionally measuring how much it improves precision.
+
+Below, you will find instructions for installing dependencies, running the code, and extending it for your own datasets and retrieval methods. We also include sample code snippets for employing BEQA with other API services such as OpenAI, Ollama, Cohere, Mistral, or Anthropic’s Claude.
+
+Continue reading to learn how to **install**, **execute**, and **extend** the BEQA solution for your own use cases!
+
 
 ## A. **Installation**
 Use pip install and obtain the following dependencies:
