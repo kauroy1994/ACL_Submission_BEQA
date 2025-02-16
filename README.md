@@ -1,8 +1,6 @@
 # BEQA Documentation
 
-## 1. **Required File Contents**
-
-### A. **Installation**
+## A. **Installation**
 Use pip install and obtain the following dependencies:
 
 ```
@@ -15,13 +13,13 @@ Use pip install and obtain the following dependencies:
 !pip install fuzzywuzzy
 ```
 
-### B. **Running Instructions**
+## B. **Running Instructions**
 
 - Refer the `.ipynb` file for a demonstration of how to run and extend the code for custom datasets and retrievers
 
-### C. **Helpful References** 
+## C. **Helpful References** 
 
-#### Using Other APIs for instead of GROQ in BEQA
+### Using Other APIs for instead of GROQ in BEQA
 
 The **BEQA transform** involves using a Large Language Model to produce a structured JSON output (e.g. an answer with specific fields) from a given input. The Groq implementation presumably constructs a prompt instructing the model to return a JSON, calls Groq’s API with JSON mode enabled, and then parses/validates the JSON result. Groq’s JSON mode ensures the output is valid JSON or returns an error if the model fails to produce proper JSON ([GroqCloud](https://console.groq.com/docs/text-chat#:~:text=Error%20Code%3A)). Following the same pattern, we can implement BEQA with other LLM APIs by:
 
@@ -32,7 +30,7 @@ The **BEQA transform** involves using a Large Language Model to produce a struct
 
 Below are **analogous Python implementations** for multiple LLM services, each following the above structure. Each code snippet assumes you have the respective API’s latest Python SDK installed and an API key (if required). Comments in the code highlight each step.
 
-##### Using OpenAI API (ChatGPT/GPT-4)
+#### Using OpenAI API (ChatGPT/GPT-4)
 
 OpenAI’s latest models support a *JSON mode* that guarantees valid JSON output when enabled ([python - OpenAI API: How do I enable JSON mode using the gpt-4-vision-preview model? - Stack Overflow](https://stackoverflow.com/questions/77434808/openai-api-how-do-i-enable-json-mode-using-the-gpt-4-vision-preview-model#:~:text=,that%20parse%20into%20valid%20JSON)). We still include an explicit instruction in the prompt to define the expected JSON structure ([python - OpenAI API: How do I enable JSON mode using the gpt-4-vision-preview model? - Stack Overflow](https://stackoverflow.com/questions/77434808/openai-api-how-do-i-enable-json-mode-using-the-gpt-4-vision-preview-model#:~:text=,is%20constrained%20to%20only%20generate)), and then use the `response_format={"type":"json_object"}` parameter. The code below shows how to use the ChatCompletion API to get a JSON answer, parse it, and retry on JSON errors:
 
@@ -89,7 +87,7 @@ print(result_data)
 
 **How it works:** The system prompt forces JSON formatting, and the `response_format={"type":"json_object"}` parameter constrains GPT-4 to only produce valid JSON ([python - OpenAI API: How do I enable JSON mode using the gpt-4-vision-preview model? - Stack Overflow](https://stackoverflow.com/questions/77434808/openai-api-how-do-i-enable-json-mode-using-the-gpt-4-vision-preview-model#:~:text=,that%20parse%20into%20valid%20JSON)). OpenAI’s documentation notes that without this parameter, even well-crafted prompts can occasionally yield invalid JSON ([python - OpenAI API: How do I enable JSON mode using the gpt-4-vision-preview model? - Stack Overflow](https://stackoverflow.com/questions/77434808/openai-api-how-do-i-enable-json-mode-using-the-gpt-4-vision-preview-model#:~:text=,is%20constrained%20to%20only%20generate)), so using the JSON mode greatly reduces errors. If the model still returns malformed JSON or misses keys, the code catches the error and retries. 
 
-##### Using Ollama (Local LLM via Ollama API)
+#### Using Ollama (Local LLM via Ollama API)
 
 [Ollama](https://ollama.ai) is a tool to run open-source LLMs locally, exposing a RESTful API. We can use the **Ollama Python library** for convenience ([GitHub - ollama/ollama-python: Ollama Python library](https://github.com/ollama/ollama-python#:~:text=from%20ollama%20import%20chat%20from,ollama%20import%20ChatResponse)). Ollama doesn’t have a built-in JSON-enforcement mode, so we rely purely on prompt instructions and post-processing.
 
@@ -141,7 +139,7 @@ print(result_data)
 
 *Note:* Running this code requires an Ollama instance with the specified model. The parameter `stream=False` (or using the `/api/generate` endpoint) ensures we get a complete JSON in one response (streaming would otherwise yield partial chunks) ([Using the Ollama API to run LLMs and generate responses locally - DEV Community](https://dev.to/jayantaadhikary/using-the-ollama-api-to-run-llms-and-generate-responses-locally-18b7#:~:text=1,is%20used%20to%20generate%20a)). 
 
-##### Using Cohere API
+#### Using Cohere API
 
 Cohere’s API offers structured output features similar to OpenAI’s. In **Cohere’s Chat API (v2)**, you can set `response_format={"type": "json_object"}` to guarantee the model’s reply is valid JSON ([How do Structured Outputs Work? — Cohere](https://docs.cohere.com/v2/docs/structured-outputs#:~:text=15%2016%20print%28res.message.content)). Cohere **requires** that you also explicitly prompt the model to produce JSON, otherwise the generation can hang or fail ([How do Structured Outputs Work? — Cohere](https://docs.cohere.com/v2/docs/structured-outputs#:~:text=)). We’ll use Cohere’s Python SDK to demonstrate this:
 
@@ -194,7 +192,7 @@ print(result_data)
 
 **Details:** We used a `user` role message to tell the model exactly what JSON to output (you could prepend a system role message if the SDK supports it). The `response_format={"type": "json_object"}` flag activates **JSON mode** on Cohere’s API, so the returned content is guaranteed to be valid JSON syntax ([How do Structured Outputs Work? — Cohere](https://docs.cohere.com/v2/docs/structured-outputs#:~:text=15%2016%20print%28res.message.content)). (The model will literally not return anything non-JSON in this mode.) As Cohere’s docs note, it’s important the prompt explicitly says *“Generate a JSON…”* to avoid the model getting confused ([How do Structured Outputs Work? — Cohere](https://docs.cohere.com/v2/docs/structured-outputs#:~:text=)). The code then parses the JSON and verifies the keys. If something is wrong, it logs an error and retries with a reinforced prompt. 
 
-##### Using Mistral API
+#### Using Mistral API
 
 [Mistral AI](https://mistral.ai) provides an API for their models (e.g. Mistral 7B and larger). They similarly support a JSON mode: by setting `response_format={"type": "json_object"}`, the Mistral API will attempt to return only valid JSON ([JSON mode | Mistral AI Large Language Models](https://docs.mistral.ai/capabilities/structured-output/json_mode/#:~:text=Users%20have%20the%20option%20to,of%20our%20models%20through%20API)). We’ll use Mistral’s Python client (`mistralai` library) to replicate the BEQA transform steps:
 
@@ -292,7 +290,7 @@ print(result_data)
 
 **Explanation:** We use Anthropic’s chat API by providing a list of messages with roles ([GitHub - anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python#:~:text=messages%3D%5B%20%7B%20,latest%22%2C%20%29%20print%28message.content)). Claude 2 will read the system instruction and attempt to follow it. In many cases, simply instructing Claude like *“Output in JSON format with keys X, Y…”* will yield a correct JSON (Anthropic even documents examples of prompting for structured output ([Enforcing JSON Outputs in Commercial LLMs](https://datachain.ai/blog/enforcing-json-outputs-in-commercial-llms#:~:text=PROMPT%20%3D%20,))). However, to be safe, we parse the output and if it fails, we give Claude another chance, this time appending an even more forceful reminder in the system prompt. This usually corrects any deviations. Since Claude’s API doesn’t have an automatic JSON validator, this manual retry loop helps achieve reliability similar to the other APIs.
 
-##### Additional Notes and Other APIs
+#### Additional Notes and Other APIs
 
 The pattern above can be applied to **other LLM APIs** as well:
 
